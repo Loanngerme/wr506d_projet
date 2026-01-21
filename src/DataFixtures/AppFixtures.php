@@ -155,7 +155,6 @@ class AppFixtures extends Fixture
             $movie->setReleaseDate($faker->dateTimeBetween('1970-01-01', '2024-12-31'));
 
             // Image (URL fictive basée sur le titre)
-            $imageSlug = strtolower(str_replace(' ', '-', substr($movie->getName(), 0, 30)));
             $movie->setImage('https://via.placeholder.com/400x600/FF5733/FFFFFF?text=' . urlencode($movie->getName()));
 
             // Définir aléatoirement si le film est en ligne (60% de chance)

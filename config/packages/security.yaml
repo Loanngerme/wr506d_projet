@@ -23,6 +23,13 @@ security:
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
 
+        auth:
+            pattern: ^/auth
+            stateless: true
+            provider: app_user_provider
+            custom_authenticators:
+                - App\Security\CustomAuthenticator
+
         api:
             pattern: ^/api
             stateless: true
@@ -31,10 +38,13 @@ security:
         main:
             lazy: true
             provider: app_user_provider
+            custom_authenticators:
+                - App\Security\CustomAuthenticator
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
+        - { path: ^/auth, roles: PUBLIC_ACCESS }
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
         - { path: ^/api/register, roles: PUBLIC_ACCESS }
         - { path: ^/api/v1/(movies|actors|categories|comments), roles: PUBLIC_ACCESS, methods: [GET] }

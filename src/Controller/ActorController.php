@@ -37,7 +37,7 @@ class ActorController extends AbstractController
     {
         $actors = $entityManager->getRepository(Actor::class)->findAll();
 
-        $data = array_map(function(Actor $actor) {
+        $data = array_map(function (Actor $actor) {
             return [
                 'id' => $actor->getId(),
                 'lastname' => $actor->getLastname(),

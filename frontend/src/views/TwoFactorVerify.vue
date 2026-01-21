@@ -1,38 +1,32 @@
 <template>
   <div class="login-container">
     <div class="login-card">
-      <h1>Connexion</h1>
-      <form @submit.prevent="handleLogin">
+      <h1>Authentification à deux facteurs</h1>
+      <p class="info-text">
+        Entrez le code à 6 chiffres généré par votre application d'authentification.
+      </p>
+      <form @submit.prevent="handleVerify">
         <div class="form-group">
-          <label for="email">Email</label>
+          <label for="code">Code 2FA</label>
           <input
-            id="email"
-            v-model="email"
-            type="email"
+            id="code"
+            v-model="code"
+            type="text"
             required
-            placeholder="votre@email.com"
-            class="form-control"
-          />
-        </div>
-        <div class="form-group">
-          <label for="password">Mot de passe</label>
-          <input
-            id="password"
-            v-model="password"
-            type="password"
-            required
-            placeholder="••••••••"
-            class="form-control"
+            maxlength="6"
+            pattern="[0-9]{6}"
+            placeholder="123456"
+            class="form-control code-input"
+            autofocus
           />
         </div>
         <div v-if="authStore.error" class="error-message">{{ authStore.error }}</div>
-        <button type="submit" :disabled="authStore.loading" class="btn btn-primary btn-block">
-          {{ authStore.loading ? 'Connexion...' : 'Se connecter' }}
+        <button type="submit" :disabled="authStore.loading || code.length !== 6" class="btn btn-primary btn-block">
+          {{ authStore.loading ? 'Vérification...' : 'Vérifier' }}
         </button>
       </form>
-      <p class="register-link">
-        Pas encore de compte ?
-        <router-link :to="{ name: 'register' }">S'inscrire</router-link>
+      <p class="back-link">
+        <router-link :to="{ name: 'login' }">Retour à la connexion</router-link>
       </p>
     </div>
   </div>
@@ -47,17 +41,18 @@ const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
 
-const email = ref('')
-const password = ref('')
+const code = ref('')
 
-async function handleLogin() {
-  const success = await authStore.login(email.value, password.value)
+// Redirect if no pending credentials
+if (!authStore.twoFactorRequired) {
+  router.push({ name: 'login' })
+}
+
+async function handleVerify() {
+  const success = await authStore.loginWith2FA(code.value)
   if (success) {
     const redirect = route.query.redirect as string
     router.push(redirect || '/')
-  } else if (authStore.twoFactorRequired) {
-    // Redirect to 2FA verification page
-    router.push({ name: '2fa-verify', query: route.query })
   }
 }
 </script>
@@ -82,10 +77,17 @@ async function handleLogin() {
 }
 
 h1 {
-  font-size: 2rem;
-  margin-bottom: 1.5rem;
+  font-size: 1.75rem;
+  margin-bottom: 1rem;
   text-align: center;
   color: #333;
+}
+
+.info-text {
+  text-align: center;
+  color: #666;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
 }
 
 .form-group {
@@ -106,6 +108,13 @@ label {
   border-radius: 4px;
   font-size: 1rem;
   transition: border-color 0.3s;
+}
+
+.code-input {
+  text-align: center;
+  font-size: 1.5rem;
+  letter-spacing: 0.5rem;
+  font-family: monospace;
 }
 
 .form-control:focus {
@@ -150,19 +159,19 @@ label {
   width: 100%;
 }
 
-.register-link {
+.back-link {
   text-align: center;
   margin-top: 1.5rem;
   color: #666;
 }
 
-.register-link a {
+.back-link a {
   color: #007bff;
   text-decoration: none;
   font-weight: 500;
 }
 
-.register-link a:hover {
+.back-link a:hover {
   text-decoration: underline;
 }
 </style>

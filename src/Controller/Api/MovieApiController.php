@@ -106,7 +106,7 @@ class MovieApiController extends AbstractController
 
         $movies = $qb->getQuery()->getResult();
 
-        $data = array_map(function(Movie $movie) {
+        $data = array_map(function (Movie $movie) {
             return $this->movieToArray($movie);
         }, $movies);
 

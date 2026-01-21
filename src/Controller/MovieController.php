@@ -59,7 +59,7 @@ class MovieController extends AbstractController
     {
         $movies = $entityManager->getRepository(Movie::class)->findAll();
 
-        $data = array_map(function(Movie $movie) {
+        $data = array_map(function (Movie $movie) {
             return [
                 'id' => $movie->getId(),
                 'name' => $movie->getName(),
@@ -69,7 +69,9 @@ class MovieController extends AbstractController
                 'image' => $movie->getImage(),
                 'createdAt' => $movie->getCreatedAt()?->format('Y-m-d H:i:s'),
                 'categories' => $movie->getCategories()->map(fn($cat) => $cat->getName())->toArray(),
-                'actors' => $movie->getActors()->map(fn($actor) => $actor->getFirstname() . ' ' . $actor->getLastname())->toArray(),
+                'actors' => $movie->getActors()->map(
+                    fn($actor) => $actor->getFirstname() . ' ' . $actor->getLastname()
+                )->toArray(),
             ];
         }, $movies);
 

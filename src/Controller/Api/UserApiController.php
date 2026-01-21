@@ -72,8 +72,13 @@ class UserApiController extends AbstractController
     }
 
     #[Route('/{id}', name: 'update', methods: ['PUT', 'PATCH'], requirements: ['id' => '\d+'])]
-    public function update(int $id, Request $request, EntityManagerInterface $em, #[CurrentUser] ?User $currentUser, UserPasswordHasherInterface $passwordHasher): JsonResponse
-    {
+    public function update(
+        int $id,
+        Request $request,
+        EntityManagerInterface $em,
+        #[CurrentUser] ?User $currentUser,
+        UserPasswordHasherInterface $passwordHasher
+    ): JsonResponse {
         $user = $em->getRepository(User::class)->find($id);
 
         if (!$user) {

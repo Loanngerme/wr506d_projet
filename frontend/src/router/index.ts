@@ -26,6 +26,17 @@ const router = createRouter({
       component: () => import('../views/RegisterView.vue')
     },
     {
+      path: '/2fa/verify',
+      name: '2fa-verify',
+      component: () => import('../views/TwoFactorVerify.vue')
+    },
+    {
+      path: '/2fa/setup',
+      name: '2fa-setup',
+      component: () => import('../views/TwoFactorSetup.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
       path: '/admin',
       name: 'admin',
       component: () => import('../views/admin/AdminLayout.vue'),

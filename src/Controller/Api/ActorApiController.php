@@ -32,7 +32,7 @@ class ActorApiController extends AbstractController
             $offset
         );
 
-        $data = array_map(function(Actor $actor) {
+        $data = array_map(function (Actor $actor) {
             return $this->actorToArray($actor);
         }, $actors);
 

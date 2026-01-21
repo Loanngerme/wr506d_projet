@@ -20,7 +20,8 @@ apiClient.interceptors.request.use((config) => {
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    // Don't redirect if it's a 2FA required response
+    if (error.response?.status === 401 && error.response?.data?.status !== 'totp_required') {
       localStorage.removeItem('token')
       localStorage.removeItem('user')
       window.location.href = '/login'
@@ -112,11 +113,39 @@ export const authAPI = {
   register(data: { email: string; password: string; firstname?: string; lastname?: string }) {
     return apiClient.post<ApiResponse<{ user: User; token: string }>>('/register', data)
   },
-  login(email: string, password: string) {
-    return apiClient.post<{ token: string }>('/login_check', { email, password })
+  login(email: string, password: string, totpCode?: string) {
+    const payload: any = { email, password }
+    if (totpCode) {
+      payload.totp_code = totpCode
+    }
+    return apiClient.post<{ token: string; status?: string; message?: string }>('/auth', payload, {
+      baseURL: 'http://localhost:8319'
+    })
   },
   me() {
     return apiClient.get<ApiResponse<User>>('/me')
+  }
+}
+
+// 2FA API
+export const twoFactorAPI = {
+  setup() {
+    return apiClient.post<{
+      secret: string
+      qr_code: string
+      provisioning_uri: string
+      message: string
+    }>('/2fa/setup')
+  },
+  enable(code: string) {
+    return apiClient.post<{
+      message: string
+      backup_codes: string[]
+      warning: string
+    }>('/2fa/enable', { code })
+  },
+  disable(code: string) {
+    return apiClient.post<{ message: string }>('/2fa/disable', { code })
   }
 }
 

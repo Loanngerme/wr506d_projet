@@ -24,6 +24,7 @@ function handleLogout() {
         </router-link>
         <div v-if="authStore.isAuthenticated" class="user-menu">
           <span class="user-name">{{ authStore.user?.firstname || authStore.user?.email }}</span>
+          <router-link to="/2fa/setup" class="btn-2fa">🔐 Activer 2FA</router-link>
           <button @click="handleLogout" class="btn-logout">Déconnexion</button>
         </div>
         <div v-else class="auth-links">
@@ -136,6 +137,22 @@ main {
 .user-name {
   font-weight: 500;
   color: #666;
+}
+
+.btn-2fa {
+  padding: 0.5rem 1rem;
+  background-color: #17a2b8;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background-color 0.3s;
+  white-space: nowrap;
+}
+
+.btn-2fa:hover {
+  background-color: #138496;
 }
 
 .btn-logout {

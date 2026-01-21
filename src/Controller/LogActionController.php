@@ -15,7 +15,7 @@ class LogActionController extends AbstractController
     {
         $logs = $entityManager->getRepository(LogAction::class)->findBy([], ['createdAt' => 'DESC']);
 
-        $data = array_map(function(LogAction $log) {
+        $data = array_map(function (LogAction $log) {
             return [
                 'id' => $log->getId(),
                 'entityType' => $log->getEntityType(),

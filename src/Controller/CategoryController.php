@@ -32,7 +32,7 @@ class CategoryController extends AbstractController
     {
         $categories = $entityManager->getRepository(Category::class)->findAll();
 
-        $data = array_map(function(Category $category) {
+        $data = array_map(function (Category $category) {
             return [
                 'id' => $category->getId(),
                 'name' => $category->getName(),
